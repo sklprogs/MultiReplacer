@@ -3,6 +3,8 @@
 import skl_shared.shared as sh
 from skl_shared.localize import _
 
+import logic as lg
+
 
 class Walker:
     
@@ -99,9 +101,17 @@ class Replacer:
             self.what.append(what)
             self.with_.append(with_)
     
+    def sort_by_len(self):
+        f = '[MultiReplacer] multi_replacer.Replacer.sort_by_len'
+        if not self.Success:
+            sh.com.cancel(f)
+            return
+        self.what, self.with_ = zip(*sorted(zip(self.what, self.with_), key=lambda x: len(x[0]), reverse=True))
+    
     def run(self):
         self.get_input()
         self.set_lists()
+        self.sort_by_len()
 
 
 if __name__ == '__main__':
