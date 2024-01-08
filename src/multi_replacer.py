@@ -149,7 +149,7 @@ class Replacer:
             sh.com.cancel(f)
             return
         mes = []
-        sub = _('Files modified in total: {}. Errors: {}')
+        sub = _('Files processed in total: {}. Errors: {}')
         sub = sub.format(len(self.files), len(self.errors))
         mes.append(sub)
         if self.errors:
