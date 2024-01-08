@@ -23,7 +23,7 @@ class Replacer:
         if len(self.what) != len(self.with_):
             self.Success = False
             sub = f'{len(self.what)} == {len(self.with_)}'
-            mes = _('The condition {} is not observed!').format(sub)
+            mes = _('The condition "{}" is not observed!').format(sub)
             sh.objs.get_mes(f, mes, True).show_warning()
     
     def set_text(self):
