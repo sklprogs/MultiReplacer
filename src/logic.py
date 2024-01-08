@@ -31,7 +31,7 @@ class Replacer:
         if not self.Success:
             sh.com.cancel(f)
             return
-        self.text = sh.ReadTextFile(self.file, Empty=True)
+        self.text = sh.ReadTextFile(self.file, Empty=True).get()
     
     def replace(self):
         f = '[MultiReplacer] logic.Replacer.replace'

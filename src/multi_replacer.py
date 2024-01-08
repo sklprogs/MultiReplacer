@@ -49,14 +49,28 @@ class Walker:
 
 class Replacer:
     
-    def __init__(self):
+    def __init__(self, path):
         self.set_values()
+        self.path = path
     
     def set_values(self):
         self.Success = True
         self.text = ''
+        self.files = []
+        self.errors = []
         self.what = []
         self.with_ = []
+    
+    def check_path(self):
+        f = '[MultiReplacer] multi_replacer.Replacer.check_path'
+        if not self.Success:
+            sh.com.cancel(f)
+            return
+        if not self.path:
+            self.Success = False
+            sh.com.rep_empty(f)
+            return
+        self.Success = sh.Directory(self.path).Success
     
     def get_input(self):
         f = '[MultiReplacer] multi_replacer.Replacer.get_input'
@@ -108,23 +122,59 @@ class Replacer:
             return
         self.what, self.with_ = zip(*sorted(zip(self.what, self.with_), key=lambda x: len(x[0]), reverse=True))
     
+    def set_files(self):
+        f = '[MultiReplacer] multi_replacer.Replacer.set_files'
+        if not self.Success:
+            sh.com.cancel(f)
+            return
+        iwalk = Walker(self.path)
+        iwalk.run()
+        self.Success = iwalk.Success
+        self.files = iwalk.files
+    
+    def replace(self):
+        f = '[MultiReplacer] multi_replacer.Replacer.replace'
+        if not self.Success:
+            sh.com.cancel(f)
+            return
+        for file in self.files:
+            irepl = lg.Replacer(file, self.what, self.with_)
+            irepl.run()
+            if not irepl.Success:
+                self.errors.append(file)
+    
+    def report(self):
+        f = '[MultiReplacer] multi_replacer.Replacer.report'
+        if not self.Success:
+            sh.com.cancel(f)
+            return
+        mes = []
+        sub = _('Files modified in total: {}. Errors: {}')
+        sub = sub.format(len(self.files), len(self.errors))
+        mes.append(sub)
+        if self.errors:
+            mes.append('')
+            sub = _('Files with errors:')
+            mes.append(sub)
+            mes.append('\n'.join(self.errors))
+        mes = '\n'.join(mes)
+        sh.objs.get_mes(f, mes).show_info()
+    
     def run(self):
+        self.check_path()
         self.get_input()
         self.set_lists()
         self.sort_by_len()
+        self.set_files()
+        self.replace()
+        self.report()
 
 
 if __name__ == '__main__':
+    f = '[MultiReplacer] multi_replacer.__main__'
     sh.com.start()
-    '''
     path = '/home/pete/bin/mclient'
-    iwalker = Walker(path)
-    iwalker.run()
-    text = '\n'.join(iwalker.files)
-    print(text)
-    '''
-    irepl = Replacer()
-    irepl.run()
-    mes = 'What:\n{}\n\nWith:\n{}'.format("\n".join(irepl.what), "\n".join(irepl.with_))
-    print(mes)
+    Replacer(path).run()
+    mes = _('Goodbye!')
+    sh.objs.get_mes(f, mes, True).show_debug()
     sh.com.end()
