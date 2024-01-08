@@ -10,19 +10,19 @@ class Replacer:
         self.Success = True
         self.file = file
         self.what = what
-        self.with = with_
+        self.with_ = with_
         self.text = ''
     
     def check(self):
         f = '[MultiReplacer] logic.Replacer.check'
-        if not self.file or not self.what or not self.with:
+        if not self.file or not self.what or not self.with_:
             self.Success = False
             sh.com.rep_empty(f)
             return
         self.Success = sh.File(self.file).Success
-        if len(self.what) != len(self.with):
+        if len(self.what) != len(self.with_):
             self.Success = False
-            sub = f'{len(self.what)} == {len(self.with)}'
+            sub = f'{len(self.what)} == {len(self.with_)}'
             mes = _('The condition {} is not observed!').format(sub)
             sh.objs.get_mes(f, mes, True).show_warning()
     
@@ -39,7 +39,7 @@ class Replacer:
             sh.com.cancel(f)
             return
         for i in range(len(self.what)):
-            self.text = self.text.replace(self.what[i], self.with[i])
+            self.text = self.text.replace(self.what[i], self.with_[i])
     
     def save(self):
         f = '[MultiReplacer] logic.Replacer.save'
